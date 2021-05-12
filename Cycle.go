@@ -208,7 +208,7 @@ func main() {
 	sdl.Init(sdl.INIT_EVERYTHING)
 	img.Init(img.INIT_PNG)
 	//instance := newInstance("IBM_Logo.ch8")
-	display := InitDisplay()
+	display := Display.InitDisplay()
 	loadedSurface, err := img.Load("left.png")
 	if err != nil {
 		panic(sdl.GetError())
