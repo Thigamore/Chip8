@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 //Struct that holds all information relating to Chip-8 Instance
@@ -24,7 +27,24 @@ type Stack struct {
 
 //Creates a new instance of a Chip-8
 //Should be used whenever a new ROM is used
-func newInstance(ROM []byte) Chip8 {
+func newInstance(romPath string) Chip8 {
+	//Opens file and checks for errors
+	reader, err := os.Open(romPath)
+	if err != nil {
+		fmt.Println("Error Opening the file")
+		panic(0)
+	}
+	//Reads file and looks for errors
+	ROM, err := ioutil.ReadAll(reader)
+	if err != nil {
+		fmt.Println("Error reading the file")
+		panic(0)
+	}
+	//If ROM is too big to be loaded into memory, returns error
+	if len(ROM) > 3584 {
+		fmt.Println("ROM too large")
+		panic(0)
+	}
 	instance := Chip8{stack: Stack{stack: make([]uint16, 30), pointer: -1},
 		memory:    make([]byte, 4096),
 		registers: make([]byte, 16),
@@ -171,7 +191,7 @@ func (instance *Chip8) DecodeExecute() {
 			}
 			instance.registers[Vx] = byte(sum)
 		case 0x6:
-			
+
 		}
 	case 0x9:
 		//if Vx j
@@ -185,22 +205,20 @@ func (instance *Chip8) DecodeExecute() {
 
 //Main function which runs the whole thing
 func main() {
-	//Opens file and checks for errors
-	reader, err := os.Open("IBM Logo.ch8")
+	sdl.Init(sdl.INIT_EVERYTHING)
+	img.Init(img.INIT_PNG)
+	//instance := newInstance("IBM_Logo.ch8")
+	display := InitDisplay()
+	loadedSurface, err := img.Load("left.png")
 	if err != nil {
-		fmt.Println("Error Opening the file")
-		panic(0)
+		panic(sdl.GetError())
 	}
-	//Reads file and looks for errors
-	ROM, err := ioutil.ReadAll(reader)
+	display.texture, err = display.renderer.CreateTextureFromSurface(loadedSurface)
 	if err != nil {
-		fmt.Println("Error reading the file")
-		panic(0)
+		panic(sdl.GetError())
 	}
-	//If ROM is too big to be loaded into memory, returns error
-	if len(ROM) > 3584 {
-		fmt.Println("ROM too large")
-		panic(0)
-	}
-
+	display.renderer.Clear()
+	display.renderer.SetDrawColor(0xFF, 0xFF, 0xFF, 0xFF)
+	display.renderer.Present()
+	sdl.Delay(500)
 }
