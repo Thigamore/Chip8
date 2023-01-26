@@ -4,6 +4,6 @@
   Fun to learn how the actual internals of the computer works instead of just a big magic box.
   
   This project implements all the basic parts of the Chip-8 CPU, a theoretical CPU that was created in around the 60-70s.
-  A bit old but a good way to learn ohw the basics work.
+  A bit old but a good way to learn how the basics work.
   
   Honestly project I am most proud of even if it isn't 100%.
